@@ -19,7 +19,7 @@ interface TestEnvironmentProps {
 
 const TestEnvironment: React.FC<TestEnvironmentProps> = ({ 
   questions = [], 
-  totalQuestions, 
+  // totalQuestions, 
   duration 
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);

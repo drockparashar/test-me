@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Cpu, Zap, Sparkles, Clock, Brain } from 'lucide-react';
 
-const AdvancedAILoader = ({ text = "Generating Questions" }) => {
+const AdvancedAILoader = () => {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('Initializing');
 
