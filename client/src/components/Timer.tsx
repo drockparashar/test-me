@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Clock } from 'lucide-react';
 
 interface TimerProps {
   duration: number; // Total time in seconds
@@ -28,11 +29,13 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp }) => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  return(
-    <div className="fixed top-4 right-4 bg-white shadow-md rounded-lg px-4 py-2 text-lg font-semibold text-gray-700">
-    Time Left: {formatTime(timeLeft)}
-  </div>
-  )
+  return (
+    <div className="fixed top-6 right-6 bg-white shadow-lg rounded-full px-6 py-3 
+                    text-lg font-semibold text-gray-700 flex items-center space-x-2">
+      <Clock className="text-blue-600" size={20} />
+      <span>{formatTime(timeLeft)}</span>
+    </div>
+  );
 };
 
 export default Timer;

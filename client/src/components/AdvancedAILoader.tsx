@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Cpu, Zap, Sparkles, Clock, Brain } from 'lucide-react';
 
 const AdvancedAILoader = () => {
@@ -19,11 +19,11 @@ const AdvancedAILoader = () => {
   useEffect(() => {
     const progressInterval = setInterval(() => {
       setProgress(prev => prev >= 100 ? 100 : prev + 1);
-    }, 200);
+    }, 300);
 
     const statusInterval = setInterval(() => {
       setStatus(statuses[Math.floor(Math.random() * statuses.length)]);
-    }, 1500);
+    }, 3000);
 
     return () => {
       clearInterval(progressInterval);
@@ -33,59 +33,73 @@ const AdvancedAILoader = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center 
-                    bg-gradient-to-br from-black via-gray-900 to-blue-900 
+                    bg-gradient-to-br from-white to-blue-50 
                     overflow-hidden">
-      {/* Holographic Grid Background */}
+      {/* Grid Background */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10 
                         animate-pulse opacity-50 grid grid-cols-20 grid-rows-20 gap-1">
           {[...Array(400)].map((_, i) => (
             <div 
               key={i} 
-              className="bg-white/5 border border-white/10 
+              className="bg-blue-500/5 border border-blue-500/10 
                          transform transition-all duration-500 
-                         hover:bg-cyan-500/20"
+                         hover:bg-blue-500/20 rounded-sm"
             />
           ))}
         </div>
       </div>
 
-      {/* Main Loader Content */}
-      <div className="relative z-10 flex flex-col items-center">
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col items-center bg-white p-12 rounded-2xl shadow-xl">
         {/* Animated Brain Icon */}
         <div className="relative mb-8">
           <Brain 
-            className="text-cyan-300 animate-pulse" 
-            size={150} 
-            strokeWidth={1} 
+            className="text-blue-600 animate-pulse" 
+            size={120} 
+            strokeWidth={1.5} 
           />
           <Sparkles 
-            className="absolute top-0 right-0 text-yellow-300 animate-spin" 
-            size={50} 
+            className="absolute top-0 right-0 text-blue-400 animate-spin" 
+            size={40} 
           />
         </div>
 
-        {/* Progress Indicators */}
-        <div className="w-96 bg-gray-800 rounded-full h-4 mb-4 overflow-hidden">
+        {/* Progress Bar */}
+        <div className="w-96 bg-blue-100 rounded-full h-4 mb-6 overflow-hidden">
           <div 
-            className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full transition-all duration-200"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 h-full transition-all duration-200"
             style={{ width: `${progress}%` }}
           />
         </div>
 
-        {/* Status and Details */}
-        <div className="flex items-center space-x-2 mb-4">
-          <Cpu className="text-cyan-400 animate-pulse" size={24} />
-          <h2 className="text-2xl font-thin text-cyan-100">
+        {/* Status Display */}
+        <div className="flex items-center space-x-3 mb-4">
+          <Cpu className="text-blue-500 animate-pulse" size={20} />
+          <h2 className="text-xl font-semibold text-gray-800">
             {status}
           </h2>
-          <Clock className="text-cyan-400 animate-pulse" size={24} />
+          <Clock className="text-blue-500 animate-pulse" size={20} />
         </div>
 
-        <div className="text-sm text-cyan-200 opacity-70 flex items-center space-x-2">
-          <Zap className="text-yellow-300" size={16} />
+        {/* Version Tag */}
+        <div className="text-sm text-gray-600 flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full">
+          <Zap className="text-blue-500" size={16} />
           <span>AI Question Generator v2.0</span>
-          <Zap className="text-yellow-300" size={16} />
+          <Zap className="text-blue-500" size={16} />
+        </div>
+      </div>
+
+      {/* Floating Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 animate-pulse">
+          <Zap className="text-blue-400/30" size={40} />
+        </div>
+        <div className="absolute bottom-1/4 right-1/3 animate-pulse delay-100">
+          <Brain className="text-blue-400/30" size={40} />
+        </div>
+        <div className="absolute top-1/3 right-1/4 animate-pulse delay-200">
+          <Sparkles className="text-blue-400/30" size={40} />
         </div>
       </div>
     </div>

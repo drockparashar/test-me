@@ -4,6 +4,7 @@ import Test from './pages/Test';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './pages/Dashboard';
 import StartTestPage from './pages/StartTestPage';
+import Analysis from './pages/AnalysisPage';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/Start" element={<StartTestPage />} />
+        <Route path="/analysis" element={<Analysis />} />
 
       </Routes>
     </Router>
