@@ -2,14 +2,14 @@
 import geminiService from '../services/geminiService.js';
 
 export const generateQuestions = async (req, res) => {
-  const { topic, difficulty } = req.body;
+  const { class_name,topic, difficulty,questionCount } = req.body;
 
   if (!topic) {
     return res.status(400).json({ error: 'Topic is required' });
   }
 
   try {
-    const questions = await geminiService.generateQuestions(topic, difficulty);
+    const questions = await geminiService.generateQuestions(class_name,topic, difficulty,questionCount);
     res.json({ 
       success: true,
       questions: questions
