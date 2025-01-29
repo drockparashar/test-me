@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BookOpen, Brain, Target, Trophy, CheckCircle, BarChart3, Zap } from 'lucide-react';
+import { BookOpen, Brain, Target, Trophy, CheckCircle, BarChart3, ArrowRight, BookOpenCheck } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,7 +8,6 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // Define the type for user data
   interface UserData {
     username: string;
     testHistory: { testDate: string; score: number; totalTime: number }[];
@@ -16,19 +15,14 @@ export default function Dashboard() {
     totalTestsTaken: number;
   }
 
-  // State to store user data
   const [userData, setUserData] = useState<UserData | null>(null);
 
-  // Fetch user data from API
   const fetchUserData = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        return;
-      }
+      if (!token) return;
       const decoded = jwtDecode<JwtPayload & { userId: string }>(token);
-      const userId = decoded.userId;
-      const response = await axios.get(`http://localhost:5000/user/getUserData/${userId}`);
+      const response = await axios.get(`http://localhost:5000/user/getUserData/${decoded.userId}`);
       setUserData(response.data);
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -36,102 +30,212 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchUserData(); // Fetch data on component mount
+    fetchUserData();
   }, []);
 
-  // Add a loading state for userData
   if (!userData || !userData.testHistory) {
-    return <div>Loading...</div>; // Or a more elaborate loading state
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="animate-pulse text-blue-600 text-lg font-medium">Loading your dashboard...</div>
+      </div>
+    );
   }
 
-  // Prepare data for performance chart
   const performanceData = userData.testHistory?.map(test => ({
     name: test.testDate,
     score: test.score
   })) || [];
 
-  // Define quick actions
   const quickActions = [
-    { icon: <BookOpen className="text-blue-500" size={30} />, title: "Start Test", description: "Choose a subject and test" },
-    { icon: <Brain className="text-green-500" size={30} />, title: "Adaptive Learning", description: "Personalized question sets" },
-    { icon: <Target className="text-purple-500" size={30} />, title: "Weekly Goals", description: "Track your progress" },
-    { icon: <Trophy className="text-yellow-500" size={30} />, title: "Achievements", description: "View your milestones" }
+    {
+      icon: <BookOpen className="text-blue-600" size={24} />,
+      title: "Start New Test",
+      description: "Begin your learning journey",
+      action: () => navigate('/start')
+    },
+    {
+      icon: <Brain className="text-blue-600" size={24} />,
+      title: "Practice Sets",
+      description: "AI-generated questions",
+      action: () => navigate('/practice')
+    },
+    {
+      icon: <Target className="text-blue-600" size={24} />,
+      title: "Set Goals",
+      description: "Track your progress",
+      action: () => navigate('/goals')
+    },
+    {
+      icon: <Trophy className="text-blue-600" size={24} />,
+      title: "Achievements",
+      description: "View your milestones",
+      action: () => navigate('/achievements')
+    }
   ];
 
-  // Calculate additional metrics
-  const averageTimePerTest = userData.testHistory.reduce((total, test) => total + test.totalTime, 0) / userData.testHistory.length || 0;
-  const totalTests = userData.totalTestsTaken || 0;
-
-  // Convert average time per test from seconds to minutes
-  const avgTimeInMinutes = (averageTimePerTest / 60000).toFixed(2);
+  const avgTimeInMinutes = ((userData.testHistory.reduce((total, test) => total + test.totalTime, 0) / userData.testHistory.length) / 60000).toFixed(2);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
-      <div className="container mx-auto px-4 py-10">
-        <div className="flex justify-between items-center mb-10">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Student Dashboard</h1>
-            <p className="text-gray-600">Welcome, {userData.username}! Let's track your learning progress.</p>
-          </div>
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition flex items-center" onClick={() => navigate('/start')}>
-            <Zap className="mr-2" size={20} /> Start New Test
-          </button>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-4 gap-6 mb-10">
-          {quickActions.map((action, index) => (
-            <div key={index} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition text-center">
-              <div className="flex justify-center mb-4">
-                {action.icon}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Header Section */}
+      <div className="bg-gradient-to-b from-white to-transparent">
+        <div className="container mx-auto px-8 sm:px-12 pt-12 pb-8">
+          <div className="relative max-w-7xl">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+              <div className="mb-6 sm:mb-0">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-3 bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-base font-medium">
+                    <BookOpenCheck size={24} />
+                    <span>Student Dashboard</span>
+                  </div>
+                  <div className="h-2 w-2 rounded-full bg-gray-300"></div>
+                  <div className="text-gray-600 text-base font-medium">
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </div>
+                </div>
+                <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+                  Welcome back, <span className="text-blue-600">{userData?.username}</span>
+                </h1>
+                <div className="space-y-6">
+                  <p className="text-xl text-gray-600 max-w-3xl">
+                    Ready to continue your learning journey? Your personalized dashboard awaits.
+                  </p>
+                  <button 
+                    onClick={() => navigate('/start-test')}
+                    className="inline-flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition group text-xl font-medium"
+                  >
+                    Start New Test
+                    <ArrowRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold mb-2">{action.title}</h3>
-              <p className="text-gray-600 text-sm">{action.description}</p>
             </div>
+            
+            {/* Quick Stats Banner */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-8 bg-white rounded-2xl shadow-lg border border-gray-100">
+              {[
+                { label: 'Current Average', value: `${userData?.averageScore.toFixed(1)}%`, icon: <BarChart3 className="text-blue-600" size={32} /> },
+                { label: 'Tests Taken', value: userData?.totalTestsTaken, icon: <CheckCircle className="text-green-600" size={32} /> },
+                { label: 'Learning Streak', value: '12 Days', icon: <Trophy className="text-yellow-600" size={32} /> },
+                { label: 'Next Goal', value: '85%', icon: <Target className="text-purple-600" size={32} /> }
+              ].map((stat, index) => (
+                <div key={index} className="flex items-center gap-4">
+                  <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center">
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <p className="text-base text-gray-600 font-medium mb-1">{stat.label}</p>
+                    <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-8 sm:px-12 py-12">
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {quickActions.map((action, index) => (
+            <button
+              key={index}
+              onClick={action.action}
+              className="relative group bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 border border-gray-100 text-left w-full"
+            >
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-blue-100/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  {action.icon}
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {action.title}
+                  </h3>
+                  <p className="text-base text-gray-600">
+                    {action.description}
+                  </p>
+                </div>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl" />
+            </button>
           ))}
         </div>
 
-        {/* Performance Analytics */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-white rounded-xl shadow-lg p-6">
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-800">Performance Trend</h2>
-                <p className="text-gray-600">Your test scores over the past weeks</p>
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Performance Chart */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8 sm:p-10 relative group hover:shadow-xl transition-all duration-300">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+              <div className="mb-6 sm:mb-0">
+                <h2 className="text-3xl font-bold text-gray-900 mb-3">Performance Trend</h2>
+                <p className="text-base text-gray-600">Your learning progress over time</p>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex gap-3">
                 {['1W', '1M', '3M'].map((period) => (
-                  <button key={period} className="px-3 py-1 text-sm rounded-full hover:bg-blue-50">
+                  <button
+                    key={period}
+                    className="px-6 py-3 rounded-xl text-base font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition"
+                  >
                     {period}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="h-[300px]">
+            <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={performanceData}>
-                  <XAxis dataKey="name" stroke="#6B7280" />
-                  <YAxis stroke="#6B7280" />
-                  <Tooltip />
-                  <Area type="monotone" dataKey="score" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.2} />
+                  <XAxis dataKey="name" stroke="#6B7280" fontSize={14} tickMargin={12} />
+                  <YAxis stroke="#6B7280" fontSize={14} tickMargin={12} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      fontSize: '14px'
+                    }}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="score" 
+                    stroke="#2563EB" 
+                    fill="url(#colorScore)" 
+                    strokeWidth={3}
+                    fillOpacity={0.2} 
+                  />
+                  <defs>
+                    <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#2563EB" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* Performance Summary */}
+          {/* Stats Cards */}
           <div className="space-y-6">
-            {[{ icon: <BarChart3 className="text-blue-500" />, title: 'Average Score', value: `${userData.averageScore.toFixed(2)}%` },
-              { icon: <CheckCircle className="text-green-500" />, title: 'Tests Completed', value: `${totalTests}` },
-              { icon: <Trophy className="text-yellow-500" />, title: 'Learning Streak', value: '12 Days' },
-              { icon: <BarChart3 className="text-orange-500" />, title: 'Average Time per Test', value: `${avgTimeInMinutes} minutes` }
+            {[
+              { icon: <BarChart3 size={32} />, title: 'Average Score', value: `${userData.averageScore.toFixed(2)}%`, color: 'text-blue-600' },
+              { icon: <CheckCircle size={32} />, title: 'Tests Completed', value: userData.totalTestsTaken.toString(), color: 'text-green-600' },
+              { icon: <Trophy size={32} />, title: 'Learning Streak', value: '12 Days', color: 'text-yellow-600' },
+              { icon: <Brain size={32} />, title: 'Avg. Time per Test', value: `${avgTimeInMinutes} min`, color: 'text-purple-600' }
             ].map((stat, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg p-6 flex items-center">
-                <div className="mr-4">{stat.icon}</div>
-                <div>
-                  <p className="text-gray-600 text-sm">{stat.title}</p>
-                  <h3 className="text-xl font-bold text-gray-800">{stat.value}</h3>
+              <div
+                key={index}
+                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 group relative"
+              >
+                <div className="flex items-center gap-6">
+                  <div className={`w-16 h-16 rounded-2xl bg-opacity-20 flex items-center justify-center ${stat.color.replace('text', 'bg')}/10`}>
+                    <div className={`${stat.color}`}>{stat.icon}</div>
+                  </div>
+                  <div>
+                    <p className="text-base font-medium text-gray-600 mb-2">{stat.title}</p>
+                    <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
+                  </div>
                 </div>
+                <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl" />
               </div>
             ))}
           </div>
