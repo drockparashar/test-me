@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TestEnvironment from '../components/TestEnvironment';
 import AdvancedAILoader from '../components/AdvancedAILoader';
+import { v4 as uuidv4 } from 'uuid';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 interface Question {
   id: number;
@@ -69,6 +71,12 @@ const Test: React.FC = () => {
           questionCount,
         });
 
+        const testId = uuidv4(); // Generate a unique test ID
+        localStorage.setItem('currentTestId', testId); // Store it temporarily
+        console.log(`Test ID: ${testId}`);
+
+
+
         if (!response.data?.questions || !Array.isArray(response.data.questions)) {
           throw new Error('Invalid response format from server');
         }
@@ -98,11 +106,60 @@ const Test: React.FC = () => {
     fetchQuestions();
   }, [selectedClass, selectedSubject, difficulty, questionCount]);
 
-  const handleTestComplete = (results: TestResults) => {
+  const handleTestComplete = async (results: TestResults) => {
     if (!results || typeof results.score !== 'number' || !Array.isArray(results.detailedResults)) {
       setError('Invalid test results');
       return;
     }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return;
+    }
+    const decoded = jwtDecode<JwtPayload & { userId: string }>(token);
+
+    const testId = localStorage.getItem('currentTestId'); // Retrieve testId
+    const userId = decoded.userId; // Get logged-in user's ID
+
+    const detailedResultsWithText = results.detailedResults.map((result, index) => ({
+      ...result,
+      questionText: questions[index]?.text || '', // Ensure the question text is included
+    }));
+
+    const testPayload = {
+      testId,
+      userId,
+      score: results.score,
+      total: results.total,
+      totalTime: results.totalTime,
+      detailedResults: detailedResultsWithText, // Updated with question text
+      selectedClass,
+      selectedSubject,
+      difficulty,
+    };
+
+  try {
+    const response = await fetch('http://localhost:5000/test/submit-test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testPayload),
+    });
+
+    if (response.ok) {
+      console.log('Test submitted successfully');
+      localStorage.removeItem('currentTestId');
+    } else {
+      console.error('Error submitting test');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+
+
+
+
+
+
 
     navigate('/analysis', {
       state: {

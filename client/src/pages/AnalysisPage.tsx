@@ -1,7 +1,17 @@
-import React, { useMemo } from 'react';
+import  { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Clock, Brain, Target, TrendingUp, AlertCircle } from 'lucide-react';
+import { 
+  Clock, 
+  Brain, 
+  Target, 
+  CheckCircle, 
+  XCircle,
+  Award,
+  BookOpen,
+  ArrowUpCircle,
+  HomeIcon
+} from 'lucide-react';
 
 interface QuestionAttempt {
   id: number;
@@ -12,74 +22,43 @@ interface QuestionAttempt {
   topic: string;
 }
 
-interface Question {
-  id: number;
-  text: string;
-  options: string[];
-  correctAnswer: string;
-  topic: string;
-}
 
-interface TestResults {
-  score: number;
-  total: number;
-  totalTime: number;
-  detailedResults: QuestionAttempt[];
-}
-
-interface LocationState {
-  results: TestResults;
-  questions: Question[];
-  selectedClass: string;
-  selectedSubject: string;
-  difficulty: string;
-}
-
-interface TopicAnalysis {
-  topic: string;
-  percentage: string;
-}
-
-const Analysis: React.FC = () => {
+const Analysis = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
   const {
     results,
     questions = [],
-    selectedClass = 'N/A',
-    selectedSubject = 'N/A',
     difficulty = 'N/A'
-  } = (location.state as LocationState) || {};
+  } = (location.state as any) || {};
 
-  // Early return if no results
   if (!results?.detailedResults || !Array.isArray(questions) || questions.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-        <p className="text-lg font-medium text-gray-800 mb-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50">
+        <BookOpen className="text-blue-500 mb-4" size={48} />
+        <p className="text-xl font-medium text-gray-800 mb-6">
           No results to display. Please take a test first.
         </p>
         <button
           onClick={() => navigate('/')}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition flex items-center"
         >
-          Go to Home
+          <HomeIcon className="mr-2" /> Go to Home
         </button>
       </div>
     );
   }
 
-  // Calculate time-based metrics
   const averageTimePerQuestion = useMemo(() => {
     if (!results.totalTime || !questions.length) return '0.0';
-    return (results.totalTime / (questions.length * 1000)).toFixed(1); // Convert ms to seconds
+    return (results.totalTime / (questions.length * 1000)).toFixed(1);
   }, [results.totalTime, questions.length]);
 
-  // Calculate topic-wise performance
   const topicAnalysis = useMemo(() => {
     const analysis: { [key: string]: { correct: number; total: number } } = {};
     
-    results.detailedResults.forEach((result, index) => {
+    results.detailedResults.forEach((result: QuestionAttempt, index: number) => {
       const question = questions[index];
       if (!question?.topic) return;
       
@@ -94,7 +73,6 @@ const Analysis: React.FC = () => {
     }));
   }, [results.detailedResults, questions]);
 
-  // Identify strengths and weaknesses
   const strengthsAndWeaknesses = useMemo(() => {
     const topics = [...topicAnalysis].sort((a, b) => 
       parseFloat(b.percentage) - parseFloat(a.percentage)
@@ -106,82 +84,102 @@ const Analysis: React.FC = () => {
     };
   }, [topicAnalysis]);
 
+  const accuracy = ((results.score / results.total) * 100).toFixed(1);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50 p-6">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h1 className="text-2xl font-semibold mb-4">Performance Analysis</h1>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-3">
-              <Target className="text-blue-500" />
-              <div>
-                <p className="text-sm text-gray-600">Score</p>
-                <p className="text-xl font-bold">{results.score}/{results.total}</p>
+    <div className="min-h-screen bg-gradient-to-br from-white to-blue-50">
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 pt-12 text-center">
+        <h1 className="text-4xl font-bold text-gray-800 mb-6">
+          Your Performance Analysis
+        </h1>
+        <p className="text-xl text-gray-600 mb-10">
+          Detailed insights to help you improve your learning journey
+        </p>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-6xl">
+        {/* Score Overview Cards */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
+          {[
+            {
+              icon: <Target className="text-blue-500" size={32} />,
+              label: "Score",
+              value: `${results.score}/${results.total}`,
+              subtext: `${accuracy}% Accuracy`
+            },
+            {
+              icon: <Brain className="text-purple-500" size={32} />,
+              label: "Difficulty",
+              value: difficulty,
+              subtext: "Current Level"
+            },
+            {
+              icon: <Clock className="text-green-500" size={32} />,
+              label: "Avg Time",
+              value: `${averageTimePerQuestion}s`,
+              subtext: "Per Question"
+            },
+            {
+              icon: <Award className="text-yellow-500" size={32} />,
+              label: "Performance",
+              value: accuracy >= "75" ? "Excellent" : accuracy >= "60" ? "Good" : "Needs Work",
+              subtext: "Overall Rating"
+            }
+          ].map((card, index) => (
+            <div key={index} className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition">
+              <div className="flex items-center mb-4">
+                {card.icon}
+                <span className="ml-2 text-gray-600">{card.label}</span>
               </div>
+              <div className="text-2xl font-bold text-gray-800">{card.value}</div>
+              <div className="text-sm text-gray-600 mt-1">{card.subtext}</div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Brain className="text-purple-500" />
-              <div>
-                <p className="text-sm text-gray-600">Difficulty</p>
-                <p className="text-xl font-bold">{difficulty}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Clock className="text-green-500" />
-              <div>
-                <p className="text-sm text-gray-600">Avg Time/Question</p>
-                <p className="text-xl font-bold">{averageTimePerQuestion}s</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <TrendingUp className="text-orange-500" />
-              <div>
-                <p className="text-sm text-gray-600">Accuracy</p>
-                <p className="text-xl font-bold">
-                  {((results.score / results.total) * 100).toFixed(1)}%
-                </p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Topic Performance Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Topic-wise Performance</h2>
-          <div className="h-64">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Topic Performance</h2>
+          <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topicAnalysis}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
                 <XAxis dataKey="topic" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="percentage" fill="#3b82f6" />
+                <Bar dataKey="percentage" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Strengths and Weaknesses */}
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-green-600">Strengths</h2>
+        {/* Strengths and Areas for Improvement */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center mb-6">
+              <ArrowUpCircle className="text-green-500 mr-2" size={24} />
+              <h2 className="text-2xl font-bold text-gray-800">Strengths</h2>
+            </div>
             <div className="space-y-4">
-              {strengthsAndWeaknesses.strengths.map((topic: TopicAnalysis) => (
-                <div key={topic.topic} className="flex justify-between items-center">
-                  <span>{topic.topic}</span>
-                  <span className="font-semibold text-green-600">{topic.percentage}%</span>
+              {strengthsAndWeaknesses.strengths.map((topic: any) => (
+                <div key={topic.topic} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <span className="font-medium">{topic.topic}</span>
+                  <span className="text-green-600 font-bold">{topic.percentage}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-red-600">Areas for Improvement</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center mb-6">
+              <Target className="text-blue-500 mr-2" size={24} />
+              <h2 className="text-2xl font-bold text-gray-800">Focus Areas</h2>
+            </div>
             <div className="space-y-4">
-              {strengthsAndWeaknesses.weaknesses.map((topic: TopicAnalysis) => (
-                <div key={topic.topic} className="flex justify-between items-center">
-                  <span>{topic.topic}</span>
-                  <span className="font-semibold text-red-600">{topic.percentage}%</span>
+              {strengthsAndWeaknesses.weaknesses.map((topic: any) => (
+                <div key={topic.topic} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <span className="font-medium">{topic.topic}</span>
+                  <span className="text-blue-600 font-bold">{topic.percentage}%</span>
                 </div>
               ))}
             </div>
@@ -189,39 +187,60 @@ const Analysis: React.FC = () => {
         </div>
 
         {/* Question Review */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Detailed Question Review</h2>
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">Detailed Review</h2>
           <div className="space-y-4">
-            {results.detailedResults.map((result, index) => (
+            {results.detailedResults.map((result: QuestionAttempt, index: number) => (
               <div 
                 key={result.id}
-                className={`p-4 rounded-lg ${result.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}
+                className={`p-4 rounded-xl transition-all ${
+                  result.isCorrect ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'
+                }`}
               >
-                <div className="flex items-start space-x-2">
-                  <AlertCircle className={result.isCorrect ? 'text-green-500' : 'text-red-500'} />
-                  <div>
-                    <p className="font-medium">Question {index + 1}</p>
-                    <p className="text-gray-700 mt-1">{questions[index]?.text}</p>
-                    <div className="mt-2 space-y-1">
-                      <p className="text-sm">
-                        Your Answer: <span className={result.isCorrect ? 'text-green-600' : 'text-red-600'}>
-                          {result.selectedAnswer || 'Not answered'}
-                        </span>
+                <div className="flex items-start space-x-4">
+                  {result.isCorrect ? (
+                    <CheckCircle className="text-green-500 mt-1" size={20} />
+                  ) : (
+                    <XCircle className="text-red-500 mt-1" size={20} />
+                  )}
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-2">
+                      <h3 className="font-semibold text-gray-800">Question {index + 1}</h3>
+                      <span className="text-sm text-gray-600">
+                        Time: {(result.timeTaken / 1000).toFixed(1)}s
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mb-2">{questions[index]?.text}</p>
+                    <div className="space-y-1 text-sm">
+                      <p className={result.isCorrect ? 'text-green-600' : 'text-red-600'}>
+                        Your Answer: {result.selectedAnswer || 'Not answered'}
                       </p>
                       {!result.isCorrect && (
-                        <p className="text-sm">
-                          Correct Answer: <span className="text-green-600">{result.correctAnswer}</span>
+                        <p className="text-green-600">
+                          Correct Answer: {result.correctAnswer}
                         </p>
                       )}
-                      <p className="text-sm text-gray-600 mt-2">
-                        Time Taken: {(result.timeTaken / 1000).toFixed(1)}s
-                      </p>
                     </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center pb-12">
+          <button 
+            onClick={() => 
+              {
+                localStorage.removeItem('currentTestId');
+                navigate('/dashboard')
+              }
+              }
+            className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition flex items-center mx-auto"
+          >
+            <HomeIcon className="mr-2" /> Back to Home
+          </button>
         </div>
       </div>
     </div>

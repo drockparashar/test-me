@@ -3,6 +3,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import questionRoutes from './src/routes/questionRoutes.js';
 import authRoutes from './src/routes/authRoutes.js';
+import testROutes from './src/routes/testROutes.js';
+import userRoutes from './src/routes/userRoutes.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -14,6 +16,8 @@ app.use(express.json());
 app.use(cors());
 app.use('/questions', questionRoutes);
 app.use('/auth', authRoutes);
+app.use('/test', testROutes);
+app.use('/user', userRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {
