@@ -8,10 +8,9 @@
 
 Watch the demo video to see Smart Test Pro in action:
 
-<video width="100%" controls>
-  <source src="./assets/videos/demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![Smart Test Pro Demo](https://img.youtube.com/vi/9Xhl2DdUUss/0.jpg)](https://www.youtube.com/watch?v=9Xhl2DdUUss)
+
+Replace `<video-id>` with the actual YouTube video ID.
 
 ---
 
