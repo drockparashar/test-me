@@ -8,7 +8,7 @@
 
 Watch the demo video to see Test Me in action:
 
-[![Test Me Demo](https://img.youtube.com/vi/9Xhl2DdUUss/0.jpg)](https://www.youtube.com/watch?v=9Xhl2DdUUss)
+[![Test Me Demo](https://img.youtube.com/vi/JwP94xQlA8I/0.jpg)](https://www.youtube.com/watch?v=JwP94xQlA8I)
 
 ---
 
