@@ -64,7 +64,7 @@ const Test: React.FC = () => {
     const fetchQuestions = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.post('http://localhost:5000/questions/generate-questions', {
+        const response = await axios.post('https://test-me-wv1b.onrender.com/questions/generate-questions', {
           class_name: selectedClass,
           topic: selectedSubject,
           difficulty,
@@ -139,7 +139,7 @@ const Test: React.FC = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/test/submit-test', {
+      const response = await fetch('https://test-me-wv1b.onrender.com/test/submit-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(testPayload),

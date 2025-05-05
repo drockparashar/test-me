@@ -38,7 +38,7 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
       if (!token) return;
       const decoded = jwtDecode<JwtPayload & { userId: string }>(token);
-      const response = await axios.get(`http://localhost:5000/user/getUserData/${decoded.userId}`);
+      const response = await axios.get(`https://test-me-wv1b.onrender.com/user/getUserData/${decoded.userId}`);
       console.log(response.data);
       setUserData(response.data);
     } catch (error) {
