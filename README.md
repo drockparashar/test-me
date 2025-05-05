@@ -10,8 +10,6 @@ Watch the demo video to see Smart Test Pro in action:
 
 [![Smart Test Pro Demo](https://img.youtube.com/vi/9Xhl2DdUUss/0.jpg)](https://www.youtube.com/watch?v=9Xhl2DdUUss)
 
-Replace `<video-id>` with the actual YouTube video ID.
-
 ---
 
 ## Features
@@ -191,15 +189,3 @@ Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
-## License
-
-This project is licensed under the MIT License.
-
----
-
-## Contributors
-
-- **Your Name** - Developer
-- **Other Contributors** - Roles
-
-Feel free to contribute to this project by submitting issues or pull requests!
