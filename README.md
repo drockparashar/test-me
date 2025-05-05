@@ -1,14 +1,14 @@
-# Smart Test Pro
+# Test Me
 
-**Smart Test Pro** is an AI-powered personalized learning platform designed to help students practice and improve their knowledge through dynamic tests and performance analytics. It leverages modern web technologies and AI to create an engaging and adaptive educational experience.
+**Test Me** is an AI-powered personalized learning platform designed to help students practice and improve their knowledge through dynamic tests and performance analytics. It leverages modern web technologies and AI to create an engaging and adaptive educational experience.
 
 ---
 
 ## Demo Video
 
-Watch the demo video to see Smart Test Pro in action:
+Watch the demo video to see Test Me in action:
 
-[![Smart Test Pro Demo](https://img.youtube.com/vi/9Xhl2DdUUss/0.jpg)](https://www.youtube.com/watch?v=9Xhl2DdUUss)
+[![Test Me Demo](https://img.youtube.com/vi/9Xhl2DdUUss/0.jpg)](https://www.youtube.com/watch?v=9Xhl2DdUUss)
 
 ---
 
@@ -188,4 +188,3 @@ Open your browser and navigate to `http://localhost:5173`.
 - Enhance AI question generation with more advanced models.
 
 ---
-
