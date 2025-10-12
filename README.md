@@ -1,14 +1,14 @@
-# Test Me
-
-**Test Me** is an AI-powered personalized learning platform designed to help students practice and improve their knowledge through dynamic tests and performance analytics. It leverages modern web technologies and AI to create an engaging and adaptive educational experience.
-
----
-
 ## Demo Video
 
 Watch the demo video to see Test Me in action:
 
 [![Test Me Demo](https://img.youtube.com/vi/JwP94xQlA8I/0.jpg)](https://www.youtube.com/watch?v=JwP94xQlA8I)
+
+---
+
+# Test Me
+
+**Test Me** is an AI-powered personalized learning platform designed to help students practice and improve their knowledge through dynamic tests and performance analytics. It leverages modern web technologies and AI to create an engaging and adaptive educational experience.
 
 ---
 
