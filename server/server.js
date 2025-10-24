@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "https://test-me-eta.vercel.app/",
+      "https://test-me-eta.vercel.app",
       "https://test-me-wv1b.onrender.com",
       "http://localhost:3000",
       "http://localhost:5173"
