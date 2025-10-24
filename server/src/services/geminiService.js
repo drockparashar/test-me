@@ -43,8 +43,8 @@ class GeminiService {
 
       Ensure each question has a specific, relevant topic from the ${subject} curriculum for ${class_name} class.`;
 
-      // ✅ Updated model name here
-      const requestUrl = `${this.baseUrl}/gemini-1.5-flash:generateContent?key=${geminiConfig.API_KEY}`;
+      // ✅ Updated model name to available model
+      const requestUrl = `${this.baseUrl}/gemini-2.5-flash:generateContent?key=${geminiConfig.API_KEY}`;
       console.log("Request URL:", requestUrl);
 
       const response = await this.axiosInstance.post(requestUrl, {
@@ -72,18 +72,37 @@ class GeminiService {
       }));
     } catch (error) {
       console.error("Gemini Service Error:", error.message);
+
+      let errorMessage =
+        "Failed to generate questions. Please check the API configuration and try again.";
+
       if (error.response) {
         console.error("Response Data:", error.response.data);
         console.error("Response Status:", error.response.status);
         console.error("Response Headers:", error.response.headers);
+
+        // Provide more specific error messages
+        if (error.response.status === 404) {
+          errorMessage =
+            "The AI model is not available. Please try again later.";
+        } else if (error.response.status === 403) {
+          errorMessage =
+            "API access denied. Please check your API key configuration.";
+        } else if (error.response.status === 429) {
+          errorMessage =
+            "API rate limit exceeded. Please try again in a few minutes.";
+        } else if (error.response.data?.error?.message) {
+          errorMessage = `API Error: ${error.response.data.error.message}`;
+        }
       } else if (error.request) {
         console.error("No Response Received:", error.request);
+        errorMessage =
+          "Network error: Unable to reach the AI service. Please check your internet connection.";
       } else {
         console.error("Error Setting Up Request:", error.message);
       }
-      throw new Error(
-        "Failed to generate questions. Please check the API configuration and try again."
-      );
+
+      throw new Error(errorMessage);
     }
   }
 

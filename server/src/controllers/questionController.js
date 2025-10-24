@@ -20,14 +20,16 @@ export const generateQuestions = async (req, res) => {
       questions: questions,
     });
   } catch (error) {
-    if (error.message.includes("models/placeholder-model")) {
-      console.error(
-        "Invalid model name. Use the /listModels endpoint to fetch available models."
-      );
-    }
+    console.error("Question Controller Error:", error.message);
+
+    // Log the full error for debugging but don't expose sensitive details to client
+    console.log("Full error details:", error);
+
     res.status(500).json({
       error: "Error generating questions",
-      message: error.message,
+      message:
+        error.message ||
+        "Failed to generate questions. Please try again later.",
     });
   }
 };
