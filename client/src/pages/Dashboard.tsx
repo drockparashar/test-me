@@ -4,6 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { buildApiUrl, API_CONFIG } from '../config/api';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function Dashboard() {
       selectedSubject: string;
       difficulty: string;
       _id: string;
+      testDocumentId?: string;
     }[];
     averageScore: number;
     totalTestsTaken: number;
@@ -38,7 +40,7 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
       if (!token) return;
       const decoded = jwtDecode<JwtPayload & { userId: string }>(token);
-      const response = await axios.get(`https://test-me-wv1b.onrender.com/user/getUserData/${decoded.userId}`);
+      const response = await axios.get(buildApiUrl(`${API_CONFIG.ENDPOINTS.USER.GET_DATA}/${decoded.userId}`));
       console.log(response.data);
       setUserData(response.data);
     } catch (error) {
@@ -281,7 +283,7 @@ export default function Dashboard() {
                     <td className="py-4 px-6">{(test.totalTime / 60000).toFixed(2)} min</td>
                     <td className="py-4 px-6">
                       <button 
-                        onClick={() => navigate(`/analysis/${test._id}`)}
+                        onClick={() => navigate(`/analysis/${test.testDocumentId || test._id}`)}
                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
                       >
                         View Details

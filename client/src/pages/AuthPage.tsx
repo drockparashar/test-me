@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { Lock, Mail, User, ArrowRight, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { buildApiUrl, API_CONFIG } from '../config/api';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,12 +20,12 @@ const AuthPage = () => {
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     try {
-      const endpoint = isLogin ? '/auth/login' : '/auth/signup';
+      const endpoint = isLogin ? API_CONFIG.ENDPOINTS.AUTH.LOGIN : API_CONFIG.ENDPOINTS.AUTH.SIGNUP;
       const payload = isLogin 
         ? { email, password }
         : { username, email, password };
   
-      const response = await fetch(`https://test-me-wv1b.onrender.com${endpoint}`, {
+      const response = await fetch(buildApiUrl(endpoint), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

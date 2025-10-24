@@ -5,6 +5,7 @@ import TestEnvironment from '../components/TestEnvironment';
 import AdvancedAILoader from '../components/AdvancedAILoader';
 import { v4 as uuidv4 } from 'uuid';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { buildApiUrl, API_CONFIG } from '../config/api';
 
 interface Question {
   id: number;
@@ -64,7 +65,7 @@ const Test: React.FC = () => {
     const fetchQuestions = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.post('https://test-me-wv1b.onrender.com/questions/generate-questions', {
+        const response = await axios.post(buildApiUrl(API_CONFIG.ENDPOINTS.QUESTIONS.GENERATE), {
           class_name: selectedClass,
           topic: selectedSubject,
           difficulty,
@@ -139,7 +140,7 @@ const Test: React.FC = () => {
     };
 
     try {
-      const response = await fetch('https://test-me-wv1b.onrender.com/test/submit-test', {
+      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.TEST.SUBMIT), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(testPayload),

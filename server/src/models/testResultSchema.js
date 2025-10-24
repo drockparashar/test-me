@@ -7,6 +7,7 @@ const detailedResultSchema = new mongoose.Schema({
   userAnswer: String,
   isCorrect: Boolean,
   timeTaken: Number,
+  topic: String, // Add topic field
 });
 
 const testResultSchema = new mongoose.Schema({
@@ -19,6 +20,7 @@ const testResultSchema = new mongoose.Schema({
   selectedClass: { type: String, required: true },
   selectedSubject: { type: String, required: true },
   difficulty: { type: String, required: true },
+  testDocumentId: { type: mongoose.Schema.Types.ObjectId, ref: "Test" }, // Link to Test document
 });
 
 export default testResultSchema;
